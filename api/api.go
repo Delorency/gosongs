@@ -8,17 +8,9 @@ import (
 
 	"github.com/go-playground/validator"
 
+	schema "main/schema"
 	v "main/validator"
 )
-
-type Song struct {
-	ID          int    `json:"id"`
-	Group       string `json:"group"`
-	Song        string `json:"song"`
-	ReleaseDate string `json:"release_date"`
-	Text        string `json:"text"`
-	Link        string `json:"link"`
-}
 
 var validate = validator.New()
 
@@ -48,7 +40,7 @@ func AddSong(s *d.Storage, w http.ResponseWriter, r *http.Request) {
 	// }
 	// defer resp.Body.Close()
 
-	var songDetail Song
+	var songDetail schema.Song
 	// if err := json.NewDecoder(resp.Body).Decode(&songDetail); err != nil {
 	// 	http.Error(w, "Ошибка обработки ответа API", http.StatusInternalServerError)
 	// 	return
@@ -63,15 +55,61 @@ func AddSong(s *d.Storage, w http.ResponseWriter, r *http.Request) {
 	_, err := s.SaveSong(songDetail.Group, songDetail.Song, songDetail.ReleaseDate, songDetail.Text, songDetail.Link)
 
 	if err != nil {
-		http.Error(w, "Ошибка сохранения в БД", http.StatusInternalServerError)
+		http.Error(w, "Ошибка сохранения", http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	return
-
 }
 
 func GetSongs(s *d.Storage, w http.ResponseWriter, r *http.Request) {
+	songs, err := s.GetSongs()
 
+	if err != nil {
+		http.Error(w, "Ошибка получения данных", http.StatusInternalServerError)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(songs)
+}
+
+func DeleteSong(id string, s *d.Storage, w http.ResponseWriter, r *http.Request) {
+	err := s.DeleteSong(id)
+
+	if err != nil {
+		http.Error(w, "Ошибка при удалении песни", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func UpdateSong(id string, s *d.Storage, w http.ResponseWriter, r *http.Request) {
+	var song schema.Song
+
+	if err := json.NewDecoder(r.Body).Decode(&song); err != nil {
+		http.Error(w, "Неверный формат запроса", http.StatusBadRequest)
+		return
+	}
+
+	song.ID = id
+
+	err := s.UpdateSong(id, &song)
+
+	if err != nil {
+		http.Error(w, "Ошибка обновления данных", http.StatusBadRequest)
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func RetrieveSong(id string, s *d.Storage, w http.ResponseWriter, r *http.Request) {
+	song, err := s.RetrieveSong(id)
+
+	if err != nil {
+		http.Error(w, "Ошибка получения данных", http.StatusInternalServerError)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(*song)
 }

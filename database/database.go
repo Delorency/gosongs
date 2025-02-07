@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 
+	schema "main/schema"
+
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
@@ -63,6 +65,68 @@ func (s *Storage) SaveSong(group, song, releaseDate, text, link string) (int64, 
 	}
 	return 1, nil
 }
-func (s *Storage) GetSongs() (string, error) {
-	return "", nil
+func (s *Storage) GetSongs() ([]schema.Song, error) {
+	rows, err := s.db.Query(`SELECT id, "group", song, releaseDate, text, link FROM song`)
+	if err != nil {
+		log.Println("Ошибка получения данных ", err)
+		return nil, nil
+	}
+
+	defer rows.Close()
+
+	var songs []schema.Song
+
+	for rows.Next() {
+		var song schema.Song
+		if err := rows.Scan(&song.ID, &song.Group, &song.Song, &song.ReleaseDate, &song.Text, &song.Link); err != nil {
+			log.Println("Ошибка при чтении строки ", err)
+			continue
+		}
+		songs = append(songs, song)
+	}
+
+	return songs, nil
+}
+
+func (s *Storage) DeleteSong(id string) error {
+	_, err := s.db.Exec("DELETE FROM song where id=$1", id)
+
+	if err != nil {
+		log.Println("Ошибка при удалении ", err)
+		return err
+	}
+
+	return nil
+}
+
+func (s *Storage) UpdateSong(id string, song *schema.Song) error {
+	_, err := s.db.Exec(`UPDATE song SET "group"=$1, song=$2, releaseDate=$3, text=$4, link=$5 WHERE id=$6`,
+		song.Group, song.Song, song.ReleaseDate, song.Text, song.Link, id)
+
+	if err != nil {
+		log.Println("Ошибка обновления записи ", err)
+		return err
+	}
+
+	return nil
+}
+
+func (s *Storage) RetrieveSong(id string) (*schema.Song, error) {
+	rows, err := s.db.Query(`SELECT id, "group", song, releaseDate, text, link FROM song where id=$1`, id)
+
+	if err != nil {
+		log.Println("Ошибка получения данных ", err)
+		return nil, nil
+	}
+
+	defer rows.Close()
+
+	var song schema.Song
+	rows.Next()
+
+	if err := rows.Scan(&song.ID, &song.Group, &song.Song, &song.ReleaseDate, &song.Text, &song.Link); err != nil {
+		log.Println("Ошибка при чтении строки ", err)
+	}
+
+	return &song, nil
 }

@@ -5,14 +5,14 @@ import (
 	"net/http"
 
 	"main/api"
-	database "main/database"
+	d "main/database"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 )
 
 func main() {
-	storage, err := database.InitDB()
+	storage, err := d.InitDB()
 	if err != nil {
 		return
 	}
@@ -27,6 +27,18 @@ func main() {
 	})
 	r.Post("/songs", func(w http.ResponseWriter, r *http.Request) {
 		api.AddSong(storage, w, r)
+	})
+	r.Get("/songs/{id}", func(w http.ResponseWriter, r *http.Request) {
+		id := chi.URLParam(r, "id")
+		api.RetrieveSong(id, storage, w, r)
+	})
+	r.Delete("/songs/{id}", func(w http.ResponseWriter, r *http.Request) {
+		id := chi.URLParam(r, "id")
+		api.DeleteSong(id, storage, w, r)
+	})
+	r.Put("/songs/{id}", func(w http.ResponseWriter, r *http.Request) {
+		id := chi.URLParam(r, "id")
+		api.UpdateSong(id, storage, w, r)
 	})
 
 	log.Println("Сервер запущен на порту 8080...")
