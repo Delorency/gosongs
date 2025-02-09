@@ -5,14 +5,14 @@ import (
 	"net/http"
 
 	"main/api"
-	d "main/database"
+	db "main/database"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 )
 
 func main() {
-	storage, err := d.InitDB()
+	storage, err := db.InitDB()
 	if err != nil {
 		return
 	}
@@ -26,7 +26,7 @@ func main() {
 		api.GetSongs(storage, w, r)
 	})
 	r.Post("/songs", func(w http.ResponseWriter, r *http.Request) {
-		api.AddSong(storage, w, r)
+		api.SaveSong(storage, w, r)
 	})
 	r.Get("/songs/{id}", func(w http.ResponseWriter, r *http.Request) {
 		id := chi.URLParam(r, "id")
