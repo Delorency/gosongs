@@ -10,6 +10,12 @@ import (
 )
 
 func GetSongText(pg schema.Pagination, id string, s *d.Storage, w http.ResponseWriter, r *http.Request) {
+	if pg.Skip < 0 || pg.Limit < 0 {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode([]string{})
+		return
+	}
+
 	text, err := s.GetSongTextDB(id)
 
 	if err != nil {
