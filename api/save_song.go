@@ -43,11 +43,11 @@ func SaveSong(s *d.Storage, w http.ResponseWriter, r *http.Request) {
 
 	songDetail.Group = input.Group
 	songDetail.Song = input.Song
-	songDetail.Release_date = "Test"
+	songDetail.Releasedate = "Test"
 	songDetail.Text = "Test"
 	songDetail.Link = "Test"
 
-	_, err := s.SaveSongDB(songDetail.Group, songDetail.Song, songDetail.Release_date, songDetail.Text, songDetail.Link)
+	_, err := s.SaveSongDB(songDetail.Group, songDetail.Song, songDetail.Releasedate, songDetail.Text, songDetail.Link)
 
 	if err != nil {
 		http.Error(w, "Ошибка сохранения", http.StatusInternalServerError)

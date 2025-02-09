@@ -26,7 +26,30 @@ func main() {
 	r.Use(middleware.Recoverer)
 
 	r.Get("/songs", func(w http.ResponseWriter, r *http.Request) {
-		api.GetSongs(storage, w, r)
+		var filpg schema.FilterPag
+		var pg schema.TextPagination
+
+		filpg.Group = r.URL.Query().Get("group")
+		filpg.Song = r.URL.Query().Get("song")
+		filpg.Releasedate = r.URL.Query().Get("release_date")
+		filpg.Text = r.URL.Query().Get("text")
+		filpg.Link = r.URL.Query().Get("link")
+
+		offset, err := strconv.Atoi(r.URL.Query().Get("offset"))
+
+		if err != nil || offset < 0 {
+			offset = 0
+		}
+
+		limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
+		if err != nil || limit <= 0 {
+			limit = 10
+		}
+
+		pg.Offset = offset
+		pg.Limit = limit
+
+		api.GetSongs(&filpg, &pg, storage, w, r)
 	})
 	r.Post("/songs", func(w http.ResponseWriter, r *http.Request) {
 		api.SaveSong(storage, w, r)
@@ -45,16 +68,22 @@ func main() {
 	})
 	r.Get("/songs/{id}/text", func(w http.ResponseWriter, r *http.Request) {
 		id := chi.URLParam(r, "id")
-		skip, _ := strconv.Atoi(r.URL.Query().Get("skip"))
-		limit, _ := strconv.Atoi(r.URL.Query().Get("limit"))
+		offset, err := strconv.Atoi(r.URL.Query().Get("offset"))
 
-		skip--
+		if err != nil || offset < 0 {
+			offset = 0
+		}
 
-		var pg schema.Pagination
-		pg.Skip = skip
+		limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
+		if err != nil || limit <= 0 {
+			limit = 10
+		}
+
+		var pg schema.TextPagination
+		pg.Offset = offset
 		pg.Limit = limit
 
-		api.GetSongText(pg, id, storage, w, r)
+		api.GetSongText(&pg, id, storage, w, r)
 
 	})
 

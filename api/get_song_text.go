@@ -9,13 +9,7 @@ import (
 	"strings"
 )
 
-func GetSongText(pg schema.Pagination, id string, s *d.Storage, w http.ResponseWriter, r *http.Request) {
-	if pg.Skip < 0 || pg.Limit < 0 {
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode([]string{})
-		return
-	}
-
+func GetSongText(pg *schema.TextPagination, id string, s *d.Storage, w http.ResponseWriter, r *http.Request) {
 	text, err := s.GetSongTextDB(id)
 
 	if err != nil {
@@ -27,9 +21,9 @@ func GetSongText(pg schema.Pagination, id string, s *d.Storage, w http.ResponseW
 		return
 	}
 
-	// Разделение по \n\n
 	arr := strings.Split(text, "\n\n")
-	start := pg.Skip * pg.Limit
+
+	start := pg.Offset * pg.Limit
 	end := start + pg.Limit
 
 	if start >= len(arr) {

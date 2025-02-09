@@ -2,7 +2,9 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
+	schema "main/schema"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -48,4 +50,34 @@ func InitDB() (*Storage, error) {
 	log.Println("Успешная инициализация таблиц")
 
 	return &Storage{db: db}, nil
+}
+
+func buildSongsQuery(params map[string]string, pg *schema.TextPagination) (string, []interface{}) {
+	query := `SELECT id, "group", song, releasedate, text, link FROM song WHERE 1=1`
+	var args []interface{}
+	argID := 1
+
+	filterFields := map[string]string{
+		"group":       "ILIKE",
+		"song":        "ILIKE",
+		"releasedate": "=",
+		"text":        "ILIKE",
+		"link":        "ILIKE",
+	}
+
+	for key, operator := range filterFields {
+		if value, exists := params[key]; exists && value != "" {
+			query += fmt.Sprintf(` AND "%s" %s $%d`, key, operator, argID)
+			if operator == "ILIKE" {
+				value = "%" + value + "%"
+			}
+			args = append(args, value)
+			argID++
+		}
+	}
+
+	query += fmt.Sprintf(" LIMIT $%d OFFSET $%d", argID, argID+1)
+	args = append(args, pg.Limit, pg.Offset)
+
+	return query, args
 }

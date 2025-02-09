@@ -1,12 +1,19 @@
 package db
 
 import (
+	"encoding/json"
 	"log"
 	schema "main/schema"
 )
 
-func (s *Storage) GetSongsDB() ([]schema.Song, error) {
-	rows, err := s.db.Query(`SELECT id, "group", song, releaseDate, text, link FROM song`)
+func (s *Storage) GetSongsDB(song *schema.FilterPag, pg *schema.TextPagination) ([]schema.Song, error) {
+	data, _ := json.Marshal(song)
+
+	var songMap map[string]string
+	json.Unmarshal(data, &songMap)
+
+	query, args := buildSongsQuery(songMap, pg)
+	rows, err := s.db.Query(query, args...)
 	if err != nil {
 		log.Println("Ошибка получения данных ", err)
 		return nil, nil
@@ -18,7 +25,7 @@ func (s *Storage) GetSongsDB() ([]schema.Song, error) {
 
 	for rows.Next() {
 		var song schema.Song
-		if err := rows.Scan(&song.Id, &song.Group, &song.Song, &song.Release_date, &song.Text, &song.Link); err != nil {
+		if err := rows.Scan(&song.Id, &song.Group, &song.Song, &song.Releasedate, &song.Text, &song.Link); err != nil {
 			log.Println("Ошибка при чтении строки ", err)
 			continue
 		}
