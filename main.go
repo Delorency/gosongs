@@ -3,12 +3,15 @@ package main
 import (
 	"log"
 	"net/http"
+	"strconv"
 
 	"main/api"
 	db "main/database"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+
+	schema "main/schema"
 )
 
 func main() {
@@ -39,6 +42,20 @@ func main() {
 	r.Put("/songs/{id}", func(w http.ResponseWriter, r *http.Request) {
 		id := chi.URLParam(r, "id")
 		api.UpdateSong(id, storage, w, r)
+	})
+	r.Get("/songs/{id}/text", func(w http.ResponseWriter, r *http.Request) {
+		id := chi.URLParam(r, "id")
+		skip, _ := strconv.Atoi(r.URL.Query().Get("skip"))
+		limit, _ := strconv.Atoi(r.URL.Query().Get("limit"))
+
+		skip--
+
+		var pg schema.Pagination
+		pg.Skip = skip
+		pg.Limit = limit
+
+		api.GetSongText(pg, id, storage, w, r)
+
 	})
 
 	log.Println("Сервер запущен на порту 8080...")

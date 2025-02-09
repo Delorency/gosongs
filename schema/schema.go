@@ -12,3 +12,8 @@ type Song struct {
 	Text         string `json:"text" validate:"required"`
 	Link         string `json:"link" validate:"required"`
 }
+
+type Pagination struct {
+	Skip  int
+	Limit int
+}
