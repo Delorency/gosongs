@@ -1,0 +1,72 @@
+definitions:
+  swagger.Output:
+    properties:
+      group:
+        type: string
+      id:
+        type: string
+      link:
+        type: string
+      releasedate:
+        type: string
+      song:
+        type: string
+      text:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /songs:
+    get:
+      consumes:
+      - application/json
+      description: Get all songs from darabase
+      parameters:
+      - description: Pagination offset (default 0)
+        in: query
+        name: offset
+        type: integer
+      - description: Number of users to return (default 10)
+        in: query
+        name: limit
+        type: integer
+      - description: group
+        in: query
+        name: group
+        type: string
+      - description: song
+        in: query
+        name: song
+        type: string
+      - description: release date
+        in: query
+        name: releasedate
+        type: string
+      - description: text
+        in: query
+        name: text
+        type: string
+      - description: link
+        in: query
+        name: link
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/swagger.Output'
+              type: array
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get all songs
+      tags:
+      - songs
+swagger: "2.0"

@@ -10,7 +10,9 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	httpSwagger "github.com/swaggo/http-swagger"
 
+	_ "main/docs"
 	schema "main/schema"
 )
 
@@ -24,6 +26,9 @@ func main() {
 
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+
+	// r.Get("/swagger/*", http.StripPrefix("/swagger", http.FileServer(http.Dir("./docs"))).ServeHTTP)
+	r.Get("/swagger/*", httpSwagger.WrapHandler)
 
 	r.Get("/songs", func(w http.ResponseWriter, r *http.Request) {
 		var filpg schema.FilterPag
