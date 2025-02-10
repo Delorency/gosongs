@@ -27,12 +27,11 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	// r.Get("/swagger/*", http.StripPrefix("/swagger", http.FileServer(http.Dir("./docs"))).ServeHTTP)
 	r.Get("/swagger/*", httpSwagger.WrapHandler)
 
 	r.Get("/songs", func(w http.ResponseWriter, r *http.Request) {
-		var filpg schema.FilterPag
-		var pg schema.TextPagination
+		var filpg schema.Filter
+		var pg schema.Pagination
 
 		filpg.Group = r.URL.Query().Get("group")
 		filpg.Song = r.URL.Query().Get("song")
@@ -84,7 +83,7 @@ func main() {
 			limit = 10
 		}
 
-		var pg schema.TextPagination
+		var pg schema.Pagination
 		pg.Offset = offset
 		pg.Limit = limit
 

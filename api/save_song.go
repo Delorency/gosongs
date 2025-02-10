@@ -5,15 +5,24 @@ import (
 	d "main/database"
 	schema "main/schema"
 	"net/http"
+	"strconv"
 
+	_ "main/swagger"
 	v "main/validator"
 )
 
+// @Summary Save song
+// @Tags songs
+// @Accept json
+// @Produce json
+//
+// @Param input body schema.SaveSongInput true "Input data"
+//
+// @Success 200 {array} schema.SongOutput
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /songs/{id} [post]
 func SaveSong(s *d.Storage, w http.ResponseWriter, r *http.Request) {
-	var input struct {
-		Group string `json:"group" validate:"required"`
-		Song  string `json:"song" validate:"required"`
-	}
+	var input schema.SaveSongInput
 
 	// Обратботка тела запроса
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
@@ -47,12 +56,15 @@ func SaveSong(s *d.Storage, w http.ResponseWriter, r *http.Request) {
 	songDetail.Text = "Test"
 	songDetail.Link = "Test"
 
-	_, err := s.SaveSongDB(songDetail.Group, songDetail.Song, songDetail.Releasedate, songDetail.Text, songDetail.Link)
+	lastId, err := s.SaveSongDB(songDetail.Group, songDetail.Song, songDetail.Releasedate, songDetail.Text, songDetail.Link)
 
 	if err != nil {
 		http.Error(w, "Ошибка сохранения", http.StatusInternalServerError)
 		return
 	}
 
+	songDetail.Id = strconv.FormatInt(lastId, 10)
+
 	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(songDetail)
 }

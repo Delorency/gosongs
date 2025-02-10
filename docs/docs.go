@@ -17,7 +17,6 @@ const docTemplate = `{
     "paths": {
         "/songs": {
             "get": {
-                "description": "Get all songs from darabase",
                 "consumes": [
                     "application/json"
                 ],
@@ -31,44 +30,37 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Pagination offset (default 0)",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Number of users to return (default 10)",
                         "name": "limit",
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
-                        "description": "group",
                         "name": "group",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "song",
-                        "name": "song",
+                        "name": "link",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "release date",
                         "name": "releasedate",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "text",
-                        "name": "text",
+                        "name": "song",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "link",
-                        "name": "link",
+                        "name": "text",
                         "in": "query"
                     }
                 ],
@@ -80,7 +72,140 @@ const docTemplate = `{
                             "items": {
                                 "type": "array",
                                 "items": {
-                                    "$ref": "#/definitions/swagger.Output"
+                                    "$ref": "#/definitions/schema.Song"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/songs/{id}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "songs"
+                ],
+                "summary": "Retrieve one song",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Song id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/schema.Song"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "songs"
+                ],
+                "summary": "Save song",
+                "parameters": [
+                    {
+                        "description": "Input data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schema.SaveSongInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/schema.SongOutput"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/songs/{id}/text": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "songs"
+                ],
+                "summary": "Get song text",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Song id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
                                 }
                             }
                         }
@@ -96,13 +221,51 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "swagger.Output": {
+        "schema.SaveSongInput": {
             "type": "object",
             "properties": {
                 "group": {
                     "type": "string"
                 },
+                "song": {
+                    "type": "string"
+                }
+            }
+        },
+        "schema.Song": {
+            "type": "object",
+            "required": [
+                "group",
+                "link",
+                "releasedate",
+                "song",
+                "text"
+            ],
+            "properties": {
+                "group": {
+                    "type": "string"
+                },
                 "id": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "releasedate": {
+                    "type": "string"
+                },
+                "song": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "schema.SongOutput": {
+            "type": "object",
+            "properties": {
+                "group": {
                     "type": "string"
                 },
                 "link": {

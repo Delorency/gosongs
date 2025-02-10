@@ -1,9 +1,35 @@
 definitions:
-  swagger.Output:
+  schema.SaveSongInput:
+    properties:
+      group:
+        type: string
+      song:
+        type: string
+    type: object
+  schema.Song:
     properties:
       group:
         type: string
       id:
+        type: string
+      link:
+        type: string
+      releasedate:
+        type: string
+      song:
+        type: string
+      text:
+        type: string
+    required:
+    - group
+    - link
+    - releasedate
+    - song
+    - text
+    type: object
+  schema.SongOutput:
+    properties:
+      group:
         type: string
       link:
         type: string
@@ -21,35 +47,27 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get all songs from darabase
       parameters:
-      - description: Pagination offset (default 0)
-        in: query
-        name: offset
-        type: integer
-      - description: Number of users to return (default 10)
-        in: query
+      - in: query
         name: limit
         type: integer
-      - description: group
-        in: query
+      - in: query
+        name: offset
+        type: integer
+      - in: query
         name: group
         type: string
-      - description: song
-        in: query
-        name: song
+      - in: query
+        name: link
         type: string
-      - description: release date
-        in: query
+      - in: query
         name: releasedate
         type: string
-      - description: text
-        in: query
-        name: text
+      - in: query
+        name: song
         type: string
-      - description: link
-        in: query
-        name: link
+      - in: query
+        name: text
         type: string
       produces:
       - application/json
@@ -59,7 +77,7 @@ paths:
           schema:
             items:
               items:
-                $ref: '#/definitions/swagger.Output'
+                $ref: '#/definitions/schema.Song'
               type: array
             type: array
         "500":
@@ -67,6 +85,92 @@ paths:
           schema:
             type: string
       summary: Get all songs
+      tags:
+      - songs
+  /songs/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Song id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/schema.Song'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Retrieve one song
+      tags:
+      - songs
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Input data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/schema.SaveSongInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/schema.SongOutput'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Save song
+      tags:
+      - songs
+  /songs/{id}/text:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Song id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                type: string
+              type: array
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get song text
       tags:
       - songs
 swagger: "2.0"

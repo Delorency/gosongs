@@ -16,5 +16,12 @@ func (s *Storage) SaveSongDB(group, song, releaseDate, text, link string) (int64
 		log.Println("Ошибка записи в таблицу ", err)
 		return 0, err
 	}
-	return 1, nil
+
+	var lastVal int64
+	err = s.db.QueryRow(`SELECT last_value FROM song_id_seq`).Scan(&lastVal)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return lastVal, nil
 }

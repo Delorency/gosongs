@@ -6,7 +6,7 @@ import (
 	schema "main/schema"
 )
 
-func (s *Storage) GetSongsDB(song *schema.FilterPag, pg *schema.TextPagination) ([]schema.Song, error) {
+func (s *Storage) GetSongsDB(song *schema.Filter, pg *schema.Pagination) ([]schema.Song, error) {
 	data, _ := json.Marshal(song)
 
 	var songMap map[string]string

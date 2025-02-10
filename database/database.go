@@ -52,7 +52,7 @@ func InitDB() (*Storage, error) {
 	return &Storage{db: db}, nil
 }
 
-func buildSongsQuery(params map[string]string, pg *schema.TextPagination) (string, []interface{}) {
+func buildSongsQuery(params map[string]string, pg *schema.Pagination) (string, []interface{}) {
 	query := `SELECT id, "group", song, releasedate, text, link FROM song WHERE 1=1`
 	var args []interface{}
 	argID := 1
