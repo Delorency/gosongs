@@ -12,7 +12,7 @@ type SaveSongInput struct {
 	Group string `json:"group" swagger:"required"`
 	Song  string `json:"song" swagger:"required"`
 }
-type SongOutput struct {
+type UpdateSong struct {
 	Group       string `json:"group"`
 	Song        string `json:"song"`
 	Releasedate string `json:"releasedate"`

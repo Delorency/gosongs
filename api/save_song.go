@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strconv"
 
-	_ "main/swagger"
 	v "main/validator"
 )
 
@@ -18,9 +17,9 @@ import (
 //
 // @Param input body schema.SaveSongInput true "Input data"
 //
-// @Success 200 {array} schema.SongOutput
+// @Success 200 {array} schema.Song
 // @Failure 500 {string} string "Internal Server Error"
-// @Router /songs/{id} [post]
+// @Router /songs [post]
 func SaveSong(s *d.Storage, w http.ResponseWriter, r *http.Request) {
 	var input schema.SaveSongInput
 

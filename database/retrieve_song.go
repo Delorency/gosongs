@@ -5,7 +5,7 @@ import (
 	schema "main/schema"
 )
 
-func (s *Storage) RetrieveSongDB(id string) (*schema.Song, error) {
+func (s *Storage) RetrieveSongDB(id int) (*schema.Song, error) {
 	var song schema.Song
 
 	err := s.db.QueryRow(`SELECT id, "group", song, releaseDate, text, link FROM song where id=$1`, id).Scan(

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	d "main/database"
 	"net/http"
+	"strconv"
 )
 
 // @Summary Retrieve one song
@@ -18,7 +19,12 @@ import (
 // @Failure 500 {string} string "Internal Server Error"
 // @Router /songs/{id} [get]
 func RetrieveSong(id string, s *d.Storage, w http.ResponseWriter, r *http.Request) {
-	song, err := s.RetrieveSongDB(id)
+	num, err := strconv.Atoi(id)
+	if err != nil {
+		http.Error(w, "Введено не число", http.StatusBadRequest)
+		return
+	}
+	song, err := s.RetrieveSongDB(num)
 
 	if err != nil {
 		if err == sql.ErrNoRows {

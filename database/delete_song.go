@@ -2,7 +2,7 @@ package db
 
 import "log"
 
-func (s *Storage) DeleteSongDB(id string) error {
+func (s *Storage) DeleteSongDB(id int) error {
 	_, err := s.db.Exec("DELETE FROM song where id=$1", id)
 
 	if err != nil {

@@ -2,7 +2,7 @@ package db
 
 import "log"
 
-func (s *Storage) GetSongTextDB(id string) (string, error) {
+func (s *Storage) GetSongTextDB(id int) (string, error) {
 	var text string
 	err := s.db.QueryRow("SELECT text FROM song WHERE id = $1", id).Scan(&text)
 

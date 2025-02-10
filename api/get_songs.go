@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	d "main/database"
 	"main/schema"
-	_ "main/swagger"
 	"net/http"
 )
 
@@ -24,6 +23,7 @@ func GetSongs(song *schema.Filter, pg *schema.Pagination, s *d.Storage, w http.R
 
 	if err != nil {
 		http.Error(w, "Ошибка получения данных", http.StatusInternalServerError)
+		return
 	}
 
 	if songs == nil {

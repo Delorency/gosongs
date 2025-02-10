@@ -84,6 +84,46 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "songs"
+                ],
+                "summary": "Save song",
+                "parameters": [
+                    {
+                        "description": "Input data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schema.SaveSongInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/schema.Song"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         },
         "/songs/{id}": {
@@ -125,7 +165,7 @@ const docTemplate = `{
                     }
                 }
             },
-            "post": {
+            "put": {
                 "consumes": [
                     "application/json"
                 ],
@@ -135,15 +175,22 @@ const docTemplate = `{
                 "tags": [
                     "songs"
                 ],
-                "summary": "Save song",
+                "summary": "Update song",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Song id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "Input data",
                         "name": "input",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/schema.SaveSongInput"
+                            "$ref": "#/definitions/schema.UpdateSong"
                         }
                     }
                 ],
@@ -153,9 +200,41 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/schema.SongOutput"
+                                "$ref": "#/definitions/schema.Song"
                             }
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "songs"
+                ],
+                "summary": "Delete song",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Song id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
                     },
                     "500": {
                         "description": "Internal Server Error",
@@ -262,7 +341,7 @@ const docTemplate = `{
                 }
             }
         },
-        "schema.SongOutput": {
+        "schema.UpdateSong": {
             "type": "object",
             "properties": {
                 "group": {

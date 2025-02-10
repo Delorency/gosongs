@@ -6,6 +6,7 @@ import (
 	d "main/database"
 	schema "main/schema"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -21,7 +22,12 @@ import (
 // @Failure 500 {string} string "Internal Server Error"
 // @Router /songs/{id}/text [get]
 func GetSongText(pg *schema.Pagination, id string, s *d.Storage, w http.ResponseWriter, r *http.Request) {
-	text, err := s.GetSongTextDB(id)
+	num, err := strconv.Atoi(id)
+	if err != nil {
+		http.Error(w, "Введено не число", http.StatusBadRequest)
+		return
+	}
+	text, err := s.GetSongTextDB(num)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
