@@ -65,6 +65,7 @@ func SaveSong(s *d.Storage, w http.ResponseWriter, r *http.Request) {
 
 	songDetail.Id = strconv.FormatInt(lastId, 10)
 
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(songDetail)
 }
