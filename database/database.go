@@ -18,13 +18,7 @@ type Storage struct {
 func InitDB() (*Storage, error) {
 	godotenv.Load()
 
-	role := os.Getenv("DB_ROLE")
-	pass := os.Getenv("DB_PASS")
-	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
-	name := os.Getenv("DB_NAME")
-
-	conn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", role, pass, host, port, name)
+	conn := os.Getenv("conn")
 
 	db, err := sql.Open("postgres", conn)
 	if err != nil {
