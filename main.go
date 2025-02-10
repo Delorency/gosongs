@@ -25,7 +25,6 @@ func main() {
 	r := chi.NewRouter()
 
 	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
 
 	r.Get("/swagger/*", httpSwagger.WrapHandler)
 
