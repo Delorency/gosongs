@@ -7,11 +7,11 @@ import (
 	"main/internal/models"
 )
 
-func CreateGroupTable() *gormigrate.Migration {
+func CreateSongTable() *gormigrate.Migration {
 	return &gormigrate.Migration{
-		ID: "20240304_create_group_table",
+		ID: "20240305_create_song_table",
 		Migrate: func(tx *gorm.DB) error {
-			return tx.AutoMigrate(&models.Group{})
+			return tx.AutoMigrate(&models.Song{})
 		},
 		Rollback: func(tx *gorm.DB) error {
 			return tx.Migrator().DropTable(models.Song{}.TableName())

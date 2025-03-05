@@ -8,6 +8,7 @@ import (
 func RunMigrations(db *gorm.DB) {
 	m := gormigrate.New(db, gormigrate.DefaultOptions, []*gormigrate.Migration{
 		CreateGroupTable(),
+		CreateSongTable(),
 	})
 
 	if err := m.Migrate(); err != nil {
