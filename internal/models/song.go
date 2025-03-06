@@ -8,7 +8,7 @@ import (
 
 type Song struct {
 	gorm.Model
-	Song        string    `gorm:"not null"`
+	Name        string    `gorm:"not null"`
 	ReleaseDate time.Time `gorm:"not null"`
 	Text        string    `gorm:"not null"`
 	Link        string    `gorm:"not null"`

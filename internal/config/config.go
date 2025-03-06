@@ -7,7 +7,7 @@ import (
 
 type ConfigHTTPServer struct {
 	Host string `env:"HOST" env-default:"localhost"`
-	Port string `env:"PORT" env-default:"5432"`
+	Port string `env:"PORT" env-default:"8080"`
 }
 
 type ConfigDatabase struct {
