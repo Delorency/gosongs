@@ -16,6 +16,7 @@ func Psql(dbrole, dbpass, dbname, dbhost, dbport string) *gorm.DB {
 	}), &gorm.Config{})
 
 	if err != nil {
+		fmt.Println(err)
 		panic("Must be implemented")
 	}
 

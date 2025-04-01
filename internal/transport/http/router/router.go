@@ -1,6 +1,7 @@
 package router
 
 import (
+	"main/internal/container"
 	"net/http"
 
 	"github.com/go-chi/chi"
@@ -16,15 +17,10 @@ func AddMiddleware(router *chi.Mux) *chi.Mux {
 	return router
 }
 
-func Router() http.Handler {
-	router := chi.NewRouter()
+func Router(cont *container.Container) http.Handler {
+	router := AddMiddleware(chi.NewRouter())
 
-	router = AddMiddleware(router)
-
-	// Endpoints
-	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello"))
-	})
+	router.Mount("/groups", NewGroupRouter(cont))
 
 	return router
 }

@@ -1,5 +1,13 @@
 package groupservice
 
-func (s *GroupService) Create() {
+import (
+	"main/internal/models"
+)
 
+type Create struct {
+	Name string `json:"name"`
+}
+
+func (s *groupService) Create(obj *models.Group) error {
+	return s.repo.Create(obj)
 }
