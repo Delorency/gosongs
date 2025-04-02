@@ -12,7 +12,8 @@ func NewGroupRouter(cont *container.Container) *chi.Mux {
 	router := AddMiddleware(chi.NewRouter())
 	handler := gh.NewGroupHandler(cont.GroupService)
 
-	router.Post("/create", handler.Create)
+	router.Post("/", handler.Create)
+	router.Put("/{id}", handler.Update)
 
 	return router
 }

@@ -10,7 +10,7 @@ import (
 type GroupDBI interface {
 	List(group *models.Group, p *schemes.Pagination) ([]models.Group, error)
 	Create(group *models.Group) error
-	Update(schema, Update, group *models.Group) error
+	Update(id uint, data *models.Group) (*models.Group, error)
 	Retrieve(group *models.Group) (models.Group, error)
 }
 

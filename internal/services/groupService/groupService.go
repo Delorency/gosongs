@@ -6,7 +6,8 @@ import (
 )
 
 type GroupServiceI interface {
-	Create(m *models.Group) error
+	Create(*models.Group) error
+	Update(id uint, data *models.Group) (*models.Group, error)
 }
 
 type groupService struct {

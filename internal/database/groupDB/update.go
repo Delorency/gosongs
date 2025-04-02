@@ -2,14 +2,20 @@ package groupdb
 
 import (
 	"main/internal/models"
+
+	"gorm.io/gorm"
 )
 
-type Update struct {
-	Name string `json:"name"`
-}
+func (r *groupDB) Update(id uint, data *models.Group) (*models.Group, error) {
+	obj := models.Group{Model: gorm.Model{ID: id}}
 
-func (r *groupDB) Update(schema, Update, group *models.Group) error {
-	err := r.db.Model(&group).Updates(schema).Error
+	if err := r.db.Model(&obj).Updates(data).Error; err != nil {
+		return nil, err
+	}
 
-	return err
+	if err := r.db.First(&obj).Error; err != nil {
+		return nil, err
+	}
+
+	return &obj, nil
 }

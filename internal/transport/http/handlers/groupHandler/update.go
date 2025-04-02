@@ -2,23 +2,38 @@ package grouphandler
 
 import (
 	"encoding/json"
+	"net/http"
+	"strconv"
+
 	"main/internal/models"
+	v "main/internal/validator"
+
 	dto "main/internal/transport/http/dto"
 	e "main/internal/transport/http/httperror"
-	v "main/internal/validator"
-	"net/http"
 
+	"github.com/go-chi/chi"
 	"github.com/go-playground/validator"
 )
 
-type requestCreate struct {
+type requestUpdate struct {
 	Name string `json:"name" validate:"required"`
 }
 
-func (gh *groupHandler) Create(w http.ResponseWriter, r *http.Request) {
-	var req requestCreate
+func (gh *groupHandler) Update(w http.ResponseWriter, r *http.Request) {
+	var req requestUpdate
 
 	w.Header().Set("Content-Type", "application/json")
+
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+
+	if err != nil {
+		dto.NewResponse(
+			e.NewError("Идентификатор должен быть числом"),
+			http.StatusNotFound,
+			w,
+		)
+		return
+	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		dto.NewResponse(
@@ -28,7 +43,6 @@ func (gh *groupHandler) Create(w http.ResponseWriter, r *http.Request) {
 		)
 		return
 	}
-
 	if err := validator.New().Struct(req); err != nil {
 		data, f := v.HandleValidationErrors(w, err)
 		if f {
@@ -41,9 +55,10 @@ func (gh *groupHandler) Create(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	obj := models.Group{Name: req.Name}
+	data := models.Group{Name: req.Name}
 
-	if err := gh.service.Create(&obj); err != nil {
+	obj, err := gh.service.Update(uint(id), &data)
+	if err != nil {
 		dto.NewResponse(
 			e.NewError("Такая группа уже была создана"),
 			http.StatusBadRequest,
@@ -52,7 +67,6 @@ func (gh *groupHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
-
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(obj)
 }
