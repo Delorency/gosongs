@@ -22,8 +22,6 @@ type requestUpdate struct {
 func (gh *groupHandler) Update(w http.ResponseWriter, r *http.Request) {
 	var req requestUpdate
 
-	w.Header().Set("Content-Type", "application/json")
-
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 
 	if err != nil {
@@ -67,6 +65,9 @@ func (gh *groupHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(obj)
+	dto.NewResponse(
+		obj,
+		http.StatusOK,
+		w,
+	)
 }

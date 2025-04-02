@@ -18,8 +18,6 @@ type requestCreate struct {
 func (gh *groupHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var req requestCreate
 
-	w.Header().Set("Content-Type", "application/json")
-
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		dto.NewResponse(
 			e.NewError(""),
@@ -52,7 +50,9 @@ func (gh *groupHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
-
-	json.NewEncoder(w).Encode(obj)
+	dto.NewResponse(
+		obj,
+		http.StatusOK,
+		w,
+	)
 }

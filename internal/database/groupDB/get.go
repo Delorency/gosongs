@@ -3,22 +3,30 @@ package groupdb
 import (
 	"main/internal/models"
 	"main/internal/schemes"
+
+	"gorm.io/gorm"
 )
 
-func (r *groupDB) List(group *models.Group, p *schemes.Pagination) ([]models.Group, error) {
+func (r *groupDB) List(p *schemes.Pagination) (*[]models.Group, error) {
 	var groups []models.Group
 
-	err := r.db.Where(group).Limit(p.Limit).Offset(p.Page).Find(groups).Error
+	err := r.db.Where(models.Group{}).Limit(p.Limit).Offset((p.Page - 1) * p.Limit).Order("created_at desc").Find(&groups).Error
 
 	if err != nil {
 		return nil, err
 	}
 
-	return groups, err
+	return &groups, err
 }
 
-func (r *groupDB) Retrieve(group *models.Group) (models.Group, error) {
-	err := r.db.First(group).Error
+func (r *groupDB) Retrieve(id uint) (*models.Group, error) {
+	obj := models.Group{Model: gorm.Model{ID: id}}
 
-	return *group, err
+	err := r.db.First(&obj).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &obj, err
 }

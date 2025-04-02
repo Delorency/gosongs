@@ -8,10 +8,10 @@ import (
 )
 
 type GroupDBI interface {
-	List(group *models.Group, p *schemes.Pagination) ([]models.Group, error)
-	Create(group *models.Group) error
-	Update(id uint, data *models.Group) (*models.Group, error)
-	Retrieve(group *models.Group) (models.Group, error)
+	List(*schemes.Pagination) (*[]models.Group, error)
+	Create(*models.Group) error
+	Update(uint, *models.Group) (*models.Group, error)
+	Retrieve(uint) (*models.Group, error)
 }
 
 type groupDB struct {
